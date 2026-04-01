@@ -73,6 +73,9 @@ const ACCEPTABLE_QUOTE_STATUSES = [
   QUOTE_STATUSES.VIEWED,
 ];
 
+// Estados desde los cuales el cliente puede rechazar la oferta completa (mismo criterio que aceptar)
+const REJECTABLE_QUOTE_STATUSES = ACCEPTABLE_QUOTE_STATUSES;
+
 // Transiciones de estado válidas para proyectos
 const VALID_PROJECT_TRANSITIONS = {
   [PROJECT_STATUSES.PENDING_START]: [PROJECT_STATUSES.IN_PROGRESS, PROJECT_STATUSES.CANCELED],
@@ -110,6 +113,7 @@ module.exports = {
   ENTITY_TYPES,
   USER_ROLES,
   ACCEPTABLE_QUOTE_STATUSES,
+  REJECTABLE_QUOTE_STATUSES,
   VALID_PROJECT_TRANSITIONS,
   VALID_PROJECT_ITEM_TRANSITIONS,
 };

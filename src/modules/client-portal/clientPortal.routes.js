@@ -2,7 +2,7 @@ const { Router } = require('express');
 const portalController = require('./clientPortal.controller');
 const { authenticateClient } = require('../../middlewares/clientAuth.middleware');
 const validate = require('../../middlewares/validate.middleware');
-const { updateProfileSchema, acceptQuoteSchema, idParamSchema } = require('./clientPortal.validation');
+const { updateProfileSchema, acceptQuoteSchema, rejectQuoteSchema, idParamSchema } = require('./clientPortal.validation');
 
 const router = Router();
 
@@ -19,6 +19,7 @@ router.put('/profile', validate(updateProfileSchema), portalController.updatePro
 router.get('/quotes', portalController.getQuotes);
 router.get('/quotes/:id', validate(idParamSchema), portalController.getQuoteDetail);
 router.post('/quotes/:id/accept', validate(acceptQuoteSchema), portalController.acceptQuote);
+router.post('/quotes/:id/reject', validate(rejectQuoteSchema), portalController.rejectQuote);
 
 // Projects
 router.get('/projects', portalController.getProjects);

@@ -1,12 +1,12 @@
 const prisma = require('../../config/prisma');
 const quoteRepository = require('./quote.repository');
 const { AppError } = require('../../utils/response');
-const { calculateItemSubtotal, calculateQuoteTotals, calculateAcceptedTotal } = require('../../utils/calculations');
+const { calculateItemSubtotal, calculateQuoteTotals, calculateAcceptedTotal, toNumber } = require('../../utils/calculations');
 const { generateQuoteNumber, generateProjectNumber } = require('../../utils/numberGenerator');
 const { QUOTE_STATUSES, QUOTE_ITEM_STATUSES, ACCEPTABLE_QUOTE_STATUSES, ENTITY_TYPES, PROJECT_STATUSES } = require('../../utils/enums');
 const { generateQuotePdf, generateAcceptancePdf } = require('../../integrations/pdf/pdf.service');
 const s3Service = require('../../storage/s3.service');
-const { sendQuoteEmail, sendClientAcceptanceNotification } = require('../../integrations/email/email.service');
+const { sendQuoteEmail, sendClientAcceptanceNotification, sendAcceptanceEmailToClient } = require('../../integrations/email/email.service');
 
 const createQuote = async (data, userId) => {
   const quoteNumber = await generateQuoteNumber();
@@ -315,6 +315,9 @@ const acceptQuote = async (id, data, userId, clientIp) => {
         projectNumber,
         title: quote.title,
         description: quote.description,
+        subtotal: acceptedCalc.subtotal,
+        taxRate: toNumber(quote.taxRate),
+        taxAmount: acceptedCalc.taxAmount,
         totalAmount: acceptedCalc.total,
         paidAmount: 0,
         pendingAmount: acceptedCalc.total,
@@ -349,6 +352,50 @@ const acceptQuote = async (id, data, userId, clientIp) => {
 
     return { acceptance, project };
   });
+
+  // Generar PDF de aceptación, subir a S3 y enviar al cliente
+  let pdfBuffer = null;
+  try {
+    pdfBuffer = await generateAcceptancePdf({
+      acceptance: result.acceptance,
+      quote,
+      client: quote.client,
+      acceptedItems,
+    });
+
+    const objectKey = s3Service.buildObjectKey(
+      'acceptances',
+      result.acceptance.id.toString(),
+      `acceptance-${quote.quoteNumber}.pdf`,
+    );
+    const uploadResult = await s3Service.uploadBuffer(pdfBuffer, objectKey);
+
+    await prisma.document.create({
+      data: {
+        clientId: quote.clientId,
+        quoteId: id,
+        quoteAcceptanceId: result.acceptance.id,
+        projectId: result.project.id,
+        documentType: 'acceptance_pdf',
+        fileName: `acceptance-${quote.quoteNumber}.pdf`,
+        filePath: uploadResult.filePath,
+        mimeType: 'application/pdf',
+        sizeInBytes: pdfBuffer.length,
+        bucket: uploadResult.bucket,
+        objectKey: uploadResult.objectKey,
+        uploadedByUserId: userId,
+      },
+    });
+  } catch (err) {
+    console.error('[Quotes] Error generando PDF de aceptación:', err.message);
+  }
+
+  // Enviar email de confirmación al cliente con PDF adjunto
+  try {
+    await sendAcceptanceEmailToClient(quote.client, quote, result.acceptance, result.project, pdfBuffer);
+  } catch (err) {
+    console.error('[Quotes] Error enviando email de aceptación al cliente:', err.message);
+  }
 
   // Notificar al admin
   try {

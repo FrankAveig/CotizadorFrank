@@ -224,6 +224,9 @@ model Project {
   projectNumber     String        @unique @db.VarChar(50)
   title             String        @db.VarChar(255)
   description       String?       @db.Text
+  subtotal          Decimal       @default(0) @db.Decimal(14, 2)
+  taxRate           Decimal       @default(0) @db.Decimal(5, 2)
+  taxAmount         Decimal       @default(0) @db.Decimal(14, 2)
   totalAmount       Decimal       @db.Decimal(14, 2)
   paidAmount        Decimal       @default(0) @db.Decimal(14, 2)
   pendingAmount     Decimal       @db.Decimal(14, 2)

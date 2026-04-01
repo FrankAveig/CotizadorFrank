@@ -2,11 +2,18 @@ const prisma = require('../../config/prisma');
 const portalRepository = require('./clientPortal.repository');
 const s3Service = require('../../storage/s3.service');
 const { AppError } = require('../../utils/response');
-const { calculateItemSubtotal, calculateAcceptedTotal } = require('../../utils/calculations');
+const { calculateItemSubtotal, calculateAcceptedTotal, toNumber } = require('../../utils/calculations');
 const { generateProjectNumber } = require('../../utils/numberGenerator');
-const { QUOTE_STATUSES, QUOTE_ITEM_STATUSES, ACCEPTABLE_QUOTE_STATUSES, ENTITY_TYPES, PROJECT_STATUSES } = require('../../utils/enums');
+const {
+  QUOTE_STATUSES,
+  QUOTE_ITEM_STATUSES,
+  ACCEPTABLE_QUOTE_STATUSES,
+  REJECTABLE_QUOTE_STATUSES,
+  ENTITY_TYPES,
+  PROJECT_STATUSES,
+} = require('../../utils/enums');
 const { generateAcceptancePdf } = require('../../integrations/pdf/pdf.service');
-const { sendClientAcceptanceNotification } = require('../../integrations/email/email.service');
+const { sendClientAcceptanceNotification, sendClientQuoteRejectionNotification, sendAcceptanceEmailToClient } = require('../../integrations/email/email.service');
 
 const getDashboard = async (clientId) => {
   const [stats, activity] = await Promise.all([
@@ -155,6 +162,9 @@ const acceptQuote = async (clientId, quoteId, data, clientIp) => {
         projectNumber,
         title: quote.title,
         description: quote.description,
+        subtotal: acceptedCalc.subtotal,
+        taxRate: toNumber(quote.taxRate),
+        taxAmount: acceptedCalc.taxAmount,
         totalAmount: acceptedCalc.total,
         paidAmount: 0,
         pendingAmount: acceptedCalc.total,
@@ -189,9 +199,10 @@ const acceptQuote = async (clientId, quoteId, data, clientIp) => {
     return { acceptance, project };
   });
 
-  // Generar PDF de aceptación y subir a S3 (no crítico)
+  // Generar PDF de aceptación, subir a S3 y enviar al cliente (no crítico)
+  let pdfBuffer = null;
   try {
-    const pdfBuffer = await generateAcceptancePdf({
+    pdfBuffer = await generateAcceptancePdf({
       acceptance: result.acceptance,
       quote,
       client: quote.client,
@@ -224,7 +235,14 @@ const acceptQuote = async (clientId, quoteId, data, clientIp) => {
     console.error('[ClientPortal] Error generando PDF de aceptación:', err.message);
   }
 
-  // Notificar al admin que el cliente aceptó/rechazó
+  // Enviar email de confirmación al cliente con PDF adjunto
+  try {
+    await sendAcceptanceEmailToClient(quote.client, quote, result.acceptance, result.project, pdfBuffer);
+  } catch (err) {
+    console.error('[ClientPortal] Error enviando email de aceptación al cliente:', err.message);
+  }
+
+  // Notificar al admin que el cliente aceptó
   try {
     const rejectedItems = isFullAcceptance
       ? []
@@ -244,6 +262,62 @@ const acceptQuote = async (clientId, quoteId, data, clientIp) => {
   }
 
   return result;
+};
+
+const rejectQuote = async (clientId, quoteId, data, clientIp) => {
+  const quote = await prisma.quote.findFirst({
+    where: { id: quoteId, clientId },
+    include: { items: { orderBy: { itemOrder: 'asc' } }, client: true },
+  });
+
+  if (!quote) throw new AppError('Cotización no encontrada', 404);
+
+  if (!REJECTABLE_QUOTE_STATUSES.includes(quote.status)) {
+    throw new AppError(
+      `No se puede rechazar una cotización con estado "${quote.status}". Debe estar emitida, enviada o vista.`,
+      400,
+    );
+  }
+
+  const notes = data.notes || null;
+  const historyNote = notes
+    ? `Cliente rechazó la oferta completa desde el portal. Motivo: ${notes}`
+    : 'Cliente rechazó la oferta completa desde el portal';
+
+  const updated = await prisma.$transaction(async (tx) => {
+    for (const item of quote.items) {
+      await tx.quoteItem.update({
+        where: { id: item.id },
+        data: { status: QUOTE_ITEM_STATUSES.REJECTED },
+      });
+    }
+
+    const q = await tx.quote.update({
+      where: { id: quoteId },
+      data: { status: QUOTE_STATUSES.REJECTED },
+      include: { items: { orderBy: { itemOrder: 'asc' } } },
+    });
+
+    await tx.statusHistory.create({
+      data: {
+        entityType: ENTITY_TYPES.QUOTE,
+        entityId: quoteId,
+        oldStatus: quote.status,
+        newStatus: QUOTE_STATUSES.REJECTED,
+        notes: historyNote,
+      },
+    });
+
+    return q;
+  });
+
+  try {
+    await sendClientQuoteRejectionNotification(quote.client, quote, notes);
+  } catch (err) {
+    console.error('[ClientPortal] Error enviando notificación de rechazo al admin:', err.message);
+  }
+
+  return { quote: updated, clientIp: clientIp || null };
 };
 
 const getProjects = async (clientId, query) => {
@@ -283,6 +357,7 @@ module.exports = {
   getQuotes,
   getQuoteDetail,
   acceptQuote,
+  rejectQuote,
   getProjects,
   getProjectDetail,
   getDocuments,

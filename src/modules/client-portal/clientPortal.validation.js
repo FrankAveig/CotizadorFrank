@@ -30,10 +30,19 @@ const acceptQuoteSchema = z.object({
   ),
 });
 
+const rejectQuoteSchema = z.object({
+  params: z.object({
+    id: z.string().regex(/^\d+$/, 'ID inválido'),
+  }),
+  body: z.object({
+    notes: z.string().max(2000).optional().nullable(),
+  }),
+});
+
 const idParamSchema = z.object({
   params: z.object({
     id: z.string().regex(/^\d+$/, 'ID inválido'),
   }),
 });
 
-module.exports = { updateProfileSchema, acceptQuoteSchema, idParamSchema };
+module.exports = { updateProfileSchema, acceptQuoteSchema, rejectQuoteSchema, idParamSchema };

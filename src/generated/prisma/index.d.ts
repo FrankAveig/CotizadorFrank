@@ -8821,6 +8821,9 @@ export namespace Prisma {
     clientId: number | null
     quoteId: number | null
     quoteAcceptanceId: number | null
+    subtotal: Decimal | null
+    taxRate: Decimal | null
+    taxAmount: Decimal | null
     totalAmount: Decimal | null
     paidAmount: Decimal | null
     pendingAmount: Decimal | null
@@ -8832,6 +8835,9 @@ export namespace Prisma {
     clientId: number | null
     quoteId: number | null
     quoteAcceptanceId: number | null
+    subtotal: Decimal | null
+    taxRate: Decimal | null
+    taxAmount: Decimal | null
     totalAmount: Decimal | null
     paidAmount: Decimal | null
     pendingAmount: Decimal | null
@@ -8846,6 +8852,9 @@ export namespace Prisma {
     projectNumber: string | null
     title: string | null
     description: string | null
+    subtotal: Decimal | null
+    taxRate: Decimal | null
+    taxAmount: Decimal | null
     totalAmount: Decimal | null
     paidAmount: Decimal | null
     pendingAmount: Decimal | null
@@ -8868,6 +8877,9 @@ export namespace Prisma {
     projectNumber: string | null
     title: string | null
     description: string | null
+    subtotal: Decimal | null
+    taxRate: Decimal | null
+    taxAmount: Decimal | null
     totalAmount: Decimal | null
     paidAmount: Decimal | null
     pendingAmount: Decimal | null
@@ -8890,6 +8902,9 @@ export namespace Prisma {
     projectNumber: number
     title: number
     description: number
+    subtotal: number
+    taxRate: number
+    taxAmount: number
     totalAmount: number
     paidAmount: number
     pendingAmount: number
@@ -8911,6 +8926,9 @@ export namespace Prisma {
     clientId?: true
     quoteId?: true
     quoteAcceptanceId?: true
+    subtotal?: true
+    taxRate?: true
+    taxAmount?: true
     totalAmount?: true
     paidAmount?: true
     pendingAmount?: true
@@ -8922,6 +8940,9 @@ export namespace Prisma {
     clientId?: true
     quoteId?: true
     quoteAcceptanceId?: true
+    subtotal?: true
+    taxRate?: true
+    taxAmount?: true
     totalAmount?: true
     paidAmount?: true
     pendingAmount?: true
@@ -8936,6 +8957,9 @@ export namespace Prisma {
     projectNumber?: true
     title?: true
     description?: true
+    subtotal?: true
+    taxRate?: true
+    taxAmount?: true
     totalAmount?: true
     paidAmount?: true
     pendingAmount?: true
@@ -8958,6 +8982,9 @@ export namespace Prisma {
     projectNumber?: true
     title?: true
     description?: true
+    subtotal?: true
+    taxRate?: true
+    taxAmount?: true
     totalAmount?: true
     paidAmount?: true
     pendingAmount?: true
@@ -8980,6 +9007,9 @@ export namespace Prisma {
     projectNumber?: true
     title?: true
     description?: true
+    subtotal?: true
+    taxRate?: true
+    taxAmount?: true
     totalAmount?: true
     paidAmount?: true
     pendingAmount?: true
@@ -9089,6 +9119,9 @@ export namespace Prisma {
     projectNumber: string
     title: string
     description: string | null
+    subtotal: Decimal
+    taxRate: Decimal
+    taxAmount: Decimal
     totalAmount: Decimal
     paidAmount: Decimal
     pendingAmount: Decimal
@@ -9130,6 +9163,9 @@ export namespace Prisma {
     projectNumber?: boolean
     title?: boolean
     description?: boolean
+    subtotal?: boolean
+    taxRate?: boolean
+    taxAmount?: boolean
     totalAmount?: boolean
     paidAmount?: boolean
     pendingAmount?: boolean
@@ -9161,6 +9197,9 @@ export namespace Prisma {
     projectNumber?: boolean
     title?: boolean
     description?: boolean
+    subtotal?: boolean
+    taxRate?: boolean
+    taxAmount?: boolean
     totalAmount?: boolean
     paidAmount?: boolean
     pendingAmount?: boolean
@@ -9175,7 +9214,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type ProjectOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "clientId" | "quoteId" | "quoteAcceptanceId" | "projectNumber" | "title" | "description" | "totalAmount" | "paidAmount" | "pendingAmount" | "paidPercentage" | "isFullyPaid" | "status" | "startedAt" | "finishedAt" | "canceledAt" | "notes" | "createdAt" | "updatedAt", ExtArgs["result"]["project"]>
+  export type ProjectOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "clientId" | "quoteId" | "quoteAcceptanceId" | "projectNumber" | "title" | "description" | "subtotal" | "taxRate" | "taxAmount" | "totalAmount" | "paidAmount" | "pendingAmount" | "paidPercentage" | "isFullyPaid" | "status" | "startedAt" | "finishedAt" | "canceledAt" | "notes" | "createdAt" | "updatedAt", ExtArgs["result"]["project"]>
   export type ProjectInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     client?: boolean | ClientDefaultArgs<ExtArgs>
     quote?: boolean | QuoteDefaultArgs<ExtArgs>
@@ -9204,6 +9243,9 @@ export namespace Prisma {
       projectNumber: string
       title: string
       description: string | null
+      subtotal: Prisma.Decimal
+      taxRate: Prisma.Decimal
+      taxAmount: Prisma.Decimal
       totalAmount: Prisma.Decimal
       paidAmount: Prisma.Decimal
       pendingAmount: Prisma.Decimal
@@ -9598,6 +9640,9 @@ export namespace Prisma {
     readonly projectNumber: FieldRef<"Project", 'String'>
     readonly title: FieldRef<"Project", 'String'>
     readonly description: FieldRef<"Project", 'String'>
+    readonly subtotal: FieldRef<"Project", 'Decimal'>
+    readonly taxRate: FieldRef<"Project", 'Decimal'>
+    readonly taxAmount: FieldRef<"Project", 'Decimal'>
     readonly totalAmount: FieldRef<"Project", 'Decimal'>
     readonly paidAmount: FieldRef<"Project", 'Decimal'>
     readonly pendingAmount: FieldRef<"Project", 'Decimal'>
@@ -14517,6 +14562,9 @@ export namespace Prisma {
     projectNumber: 'projectNumber',
     title: 'title',
     description: 'description',
+    subtotal: 'subtotal',
+    taxRate: 'taxRate',
+    taxAmount: 'taxAmount',
     totalAmount: 'totalAmount',
     paidAmount: 'paidAmount',
     pendingAmount: 'pendingAmount',
@@ -15416,6 +15464,9 @@ export namespace Prisma {
     projectNumber?: StringFilter<"Project"> | string
     title?: StringFilter<"Project"> | string
     description?: StringNullableFilter<"Project"> | string | null
+    subtotal?: DecimalFilter<"Project"> | Decimal | DecimalJsLike | number | string
+    taxRate?: DecimalFilter<"Project"> | Decimal | DecimalJsLike | number | string
+    taxAmount?: DecimalFilter<"Project"> | Decimal | DecimalJsLike | number | string
     totalAmount?: DecimalFilter<"Project"> | Decimal | DecimalJsLike | number | string
     paidAmount?: DecimalFilter<"Project"> | Decimal | DecimalJsLike | number | string
     pendingAmount?: DecimalFilter<"Project"> | Decimal | DecimalJsLike | number | string
@@ -15444,6 +15495,9 @@ export namespace Prisma {
     projectNumber?: SortOrder
     title?: SortOrder
     description?: SortOrderInput | SortOrder
+    subtotal?: SortOrder
+    taxRate?: SortOrder
+    taxAmount?: SortOrder
     totalAmount?: SortOrder
     paidAmount?: SortOrder
     pendingAmount?: SortOrder
@@ -15476,6 +15530,9 @@ export namespace Prisma {
     quoteId?: IntFilter<"Project"> | number
     title?: StringFilter<"Project"> | string
     description?: StringNullableFilter<"Project"> | string | null
+    subtotal?: DecimalFilter<"Project"> | Decimal | DecimalJsLike | number | string
+    taxRate?: DecimalFilter<"Project"> | Decimal | DecimalJsLike | number | string
+    taxAmount?: DecimalFilter<"Project"> | Decimal | DecimalJsLike | number | string
     totalAmount?: DecimalFilter<"Project"> | Decimal | DecimalJsLike | number | string
     paidAmount?: DecimalFilter<"Project"> | Decimal | DecimalJsLike | number | string
     pendingAmount?: DecimalFilter<"Project"> | Decimal | DecimalJsLike | number | string
@@ -15504,6 +15561,9 @@ export namespace Prisma {
     projectNumber?: SortOrder
     title?: SortOrder
     description?: SortOrderInput | SortOrder
+    subtotal?: SortOrder
+    taxRate?: SortOrder
+    taxAmount?: SortOrder
     totalAmount?: SortOrder
     paidAmount?: SortOrder
     pendingAmount?: SortOrder
@@ -15534,6 +15594,9 @@ export namespace Prisma {
     projectNumber?: StringWithAggregatesFilter<"Project"> | string
     title?: StringWithAggregatesFilter<"Project"> | string
     description?: StringNullableWithAggregatesFilter<"Project"> | string | null
+    subtotal?: DecimalWithAggregatesFilter<"Project"> | Decimal | DecimalJsLike | number | string
+    taxRate?: DecimalWithAggregatesFilter<"Project"> | Decimal | DecimalJsLike | number | string
+    taxAmount?: DecimalWithAggregatesFilter<"Project"> | Decimal | DecimalJsLike | number | string
     totalAmount?: DecimalWithAggregatesFilter<"Project"> | Decimal | DecimalJsLike | number | string
     paidAmount?: DecimalWithAggregatesFilter<"Project"> | Decimal | DecimalJsLike | number | string
     pendingAmount?: DecimalWithAggregatesFilter<"Project"> | Decimal | DecimalJsLike | number | string
@@ -16554,6 +16617,9 @@ export namespace Prisma {
     projectNumber: string
     title: string
     description?: string | null
+    subtotal?: Decimal | DecimalJsLike | number | string
+    taxRate?: Decimal | DecimalJsLike | number | string
+    taxAmount?: Decimal | DecimalJsLike | number | string
     totalAmount: Decimal | DecimalJsLike | number | string
     paidAmount?: Decimal | DecimalJsLike | number | string
     pendingAmount: Decimal | DecimalJsLike | number | string
@@ -16582,6 +16648,9 @@ export namespace Prisma {
     projectNumber: string
     title: string
     description?: string | null
+    subtotal?: Decimal | DecimalJsLike | number | string
+    taxRate?: Decimal | DecimalJsLike | number | string
+    taxAmount?: Decimal | DecimalJsLike | number | string
     totalAmount: Decimal | DecimalJsLike | number | string
     paidAmount?: Decimal | DecimalJsLike | number | string
     pendingAmount: Decimal | DecimalJsLike | number | string
@@ -16603,6 +16672,9 @@ export namespace Prisma {
     projectNumber?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    subtotal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    taxRate?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    taxAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     totalAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     paidAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     pendingAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
@@ -16631,6 +16703,9 @@ export namespace Prisma {
     projectNumber?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    subtotal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    taxRate?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    taxAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     totalAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     paidAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     pendingAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
@@ -16656,6 +16731,9 @@ export namespace Prisma {
     projectNumber: string
     title: string
     description?: string | null
+    subtotal?: Decimal | DecimalJsLike | number | string
+    taxRate?: Decimal | DecimalJsLike | number | string
+    taxAmount?: Decimal | DecimalJsLike | number | string
     totalAmount: Decimal | DecimalJsLike | number | string
     paidAmount?: Decimal | DecimalJsLike | number | string
     pendingAmount: Decimal | DecimalJsLike | number | string
@@ -16674,6 +16752,9 @@ export namespace Prisma {
     projectNumber?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    subtotal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    taxRate?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    taxAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     totalAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     paidAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     pendingAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
@@ -16696,6 +16777,9 @@ export namespace Prisma {
     projectNumber?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    subtotal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    taxRate?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    taxAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     totalAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     paidAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     pendingAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
@@ -17862,6 +17946,9 @@ export namespace Prisma {
     projectNumber?: SortOrder
     title?: SortOrder
     description?: SortOrder
+    subtotal?: SortOrder
+    taxRate?: SortOrder
+    taxAmount?: SortOrder
     totalAmount?: SortOrder
     paidAmount?: SortOrder
     pendingAmount?: SortOrder
@@ -17881,6 +17968,9 @@ export namespace Prisma {
     clientId?: SortOrder
     quoteId?: SortOrder
     quoteAcceptanceId?: SortOrder
+    subtotal?: SortOrder
+    taxRate?: SortOrder
+    taxAmount?: SortOrder
     totalAmount?: SortOrder
     paidAmount?: SortOrder
     pendingAmount?: SortOrder
@@ -17895,6 +17985,9 @@ export namespace Prisma {
     projectNumber?: SortOrder
     title?: SortOrder
     description?: SortOrder
+    subtotal?: SortOrder
+    taxRate?: SortOrder
+    taxAmount?: SortOrder
     totalAmount?: SortOrder
     paidAmount?: SortOrder
     pendingAmount?: SortOrder
@@ -17917,6 +18010,9 @@ export namespace Prisma {
     projectNumber?: SortOrder
     title?: SortOrder
     description?: SortOrder
+    subtotal?: SortOrder
+    taxRate?: SortOrder
+    taxAmount?: SortOrder
     totalAmount?: SortOrder
     paidAmount?: SortOrder
     pendingAmount?: SortOrder
@@ -17936,6 +18032,9 @@ export namespace Prisma {
     clientId?: SortOrder
     quoteId?: SortOrder
     quoteAcceptanceId?: SortOrder
+    subtotal?: SortOrder
+    taxRate?: SortOrder
+    taxAmount?: SortOrder
     totalAmount?: SortOrder
     paidAmount?: SortOrder
     pendingAmount?: SortOrder
@@ -20251,6 +20350,9 @@ export namespace Prisma {
     projectNumber: string
     title: string
     description?: string | null
+    subtotal?: Decimal | DecimalJsLike | number | string
+    taxRate?: Decimal | DecimalJsLike | number | string
+    taxAmount?: Decimal | DecimalJsLike | number | string
     totalAmount: Decimal | DecimalJsLike | number | string
     paidAmount?: Decimal | DecimalJsLike | number | string
     pendingAmount: Decimal | DecimalJsLike | number | string
@@ -20277,6 +20379,9 @@ export namespace Prisma {
     projectNumber: string
     title: string
     description?: string | null
+    subtotal?: Decimal | DecimalJsLike | number | string
+    taxRate?: Decimal | DecimalJsLike | number | string
+    taxAmount?: Decimal | DecimalJsLike | number | string
     totalAmount: Decimal | DecimalJsLike | number | string
     paidAmount?: Decimal | DecimalJsLike | number | string
     pendingAmount: Decimal | DecimalJsLike | number | string
@@ -20431,6 +20536,9 @@ export namespace Prisma {
     projectNumber?: StringFilter<"Project"> | string
     title?: StringFilter<"Project"> | string
     description?: StringNullableFilter<"Project"> | string | null
+    subtotal?: DecimalFilter<"Project"> | Decimal | DecimalJsLike | number | string
+    taxRate?: DecimalFilter<"Project"> | Decimal | DecimalJsLike | number | string
+    taxAmount?: DecimalFilter<"Project"> | Decimal | DecimalJsLike | number | string
     totalAmount?: DecimalFilter<"Project"> | Decimal | DecimalJsLike | number | string
     paidAmount?: DecimalFilter<"Project"> | Decimal | DecimalJsLike | number | string
     pendingAmount?: DecimalFilter<"Project"> | Decimal | DecimalJsLike | number | string
@@ -20643,6 +20751,9 @@ export namespace Prisma {
     projectNumber: string
     title: string
     description?: string | null
+    subtotal?: Decimal | DecimalJsLike | number | string
+    taxRate?: Decimal | DecimalJsLike | number | string
+    taxAmount?: Decimal | DecimalJsLike | number | string
     totalAmount: Decimal | DecimalJsLike | number | string
     paidAmount?: Decimal | DecimalJsLike | number | string
     pendingAmount: Decimal | DecimalJsLike | number | string
@@ -20669,6 +20780,9 @@ export namespace Prisma {
     projectNumber: string
     title: string
     description?: string | null
+    subtotal?: Decimal | DecimalJsLike | number | string
+    taxRate?: Decimal | DecimalJsLike | number | string
+    taxAmount?: Decimal | DecimalJsLike | number | string
     totalAmount: Decimal | DecimalJsLike | number | string
     paidAmount?: Decimal | DecimalJsLike | number | string
     pendingAmount: Decimal | DecimalJsLike | number | string
@@ -21193,6 +21307,9 @@ export namespace Prisma {
     projectNumber: string
     title: string
     description?: string | null
+    subtotal?: Decimal | DecimalJsLike | number | string
+    taxRate?: Decimal | DecimalJsLike | number | string
+    taxAmount?: Decimal | DecimalJsLike | number | string
     totalAmount: Decimal | DecimalJsLike | number | string
     paidAmount?: Decimal | DecimalJsLike | number | string
     pendingAmount: Decimal | DecimalJsLike | number | string
@@ -21219,6 +21336,9 @@ export namespace Prisma {
     projectNumber: string
     title: string
     description?: string | null
+    subtotal?: Decimal | DecimalJsLike | number | string
+    taxRate?: Decimal | DecimalJsLike | number | string
+    taxAmount?: Decimal | DecimalJsLike | number | string
     totalAmount: Decimal | DecimalJsLike | number | string
     paidAmount?: Decimal | DecimalJsLike | number | string
     pendingAmount: Decimal | DecimalJsLike | number | string
@@ -21423,6 +21543,9 @@ export namespace Prisma {
     projectNumber?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    subtotal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    taxRate?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    taxAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     totalAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     paidAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     pendingAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
@@ -21449,6 +21572,9 @@ export namespace Prisma {
     projectNumber?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    subtotal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    taxRate?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    taxAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     totalAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     paidAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     pendingAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
@@ -22086,6 +22212,9 @@ export namespace Prisma {
     projectNumber: string
     title: string
     description?: string | null
+    subtotal?: Decimal | DecimalJsLike | number | string
+    taxRate?: Decimal | DecimalJsLike | number | string
+    taxAmount?: Decimal | DecimalJsLike | number | string
     totalAmount: Decimal | DecimalJsLike | number | string
     paidAmount?: Decimal | DecimalJsLike | number | string
     pendingAmount: Decimal | DecimalJsLike | number | string
@@ -22113,6 +22242,9 @@ export namespace Prisma {
     projectNumber: string
     title: string
     description?: string | null
+    subtotal?: Decimal | DecimalJsLike | number | string
+    taxRate?: Decimal | DecimalJsLike | number | string
+    taxAmount?: Decimal | DecimalJsLike | number | string
     totalAmount: Decimal | DecimalJsLike | number | string
     paidAmount?: Decimal | DecimalJsLike | number | string
     pendingAmount: Decimal | DecimalJsLike | number | string
@@ -22149,6 +22281,9 @@ export namespace Prisma {
     projectNumber?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    subtotal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    taxRate?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    taxAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     totalAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     paidAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     pendingAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
@@ -22176,6 +22311,9 @@ export namespace Prisma {
     projectNumber?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    subtotal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    taxRate?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    taxAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     totalAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     paidAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     pendingAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
@@ -22196,6 +22334,9 @@ export namespace Prisma {
     projectNumber: string
     title: string
     description?: string | null
+    subtotal?: Decimal | DecimalJsLike | number | string
+    taxRate?: Decimal | DecimalJsLike | number | string
+    taxAmount?: Decimal | DecimalJsLike | number | string
     totalAmount: Decimal | DecimalJsLike | number | string
     paidAmount?: Decimal | DecimalJsLike | number | string
     pendingAmount: Decimal | DecimalJsLike | number | string
@@ -22223,6 +22364,9 @@ export namespace Prisma {
     projectNumber: string
     title: string
     description?: string | null
+    subtotal?: Decimal | DecimalJsLike | number | string
+    taxRate?: Decimal | DecimalJsLike | number | string
+    taxAmount?: Decimal | DecimalJsLike | number | string
     totalAmount: Decimal | DecimalJsLike | number | string
     paidAmount?: Decimal | DecimalJsLike | number | string
     pendingAmount: Decimal | DecimalJsLike | number | string
@@ -22291,6 +22435,9 @@ export namespace Prisma {
     projectNumber?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    subtotal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    taxRate?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    taxAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     totalAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     paidAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     pendingAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
@@ -22318,6 +22465,9 @@ export namespace Prisma {
     projectNumber?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    subtotal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    taxRate?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    taxAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     totalAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     paidAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     pendingAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
@@ -22504,6 +22654,9 @@ export namespace Prisma {
     projectNumber: string
     title: string
     description?: string | null
+    subtotal?: Decimal | DecimalJsLike | number | string
+    taxRate?: Decimal | DecimalJsLike | number | string
+    taxAmount?: Decimal | DecimalJsLike | number | string
     totalAmount: Decimal | DecimalJsLike | number | string
     paidAmount?: Decimal | DecimalJsLike | number | string
     pendingAmount: Decimal | DecimalJsLike | number | string
@@ -22531,6 +22684,9 @@ export namespace Prisma {
     projectNumber: string
     title: string
     description?: string | null
+    subtotal?: Decimal | DecimalJsLike | number | string
+    taxRate?: Decimal | DecimalJsLike | number | string
+    taxAmount?: Decimal | DecimalJsLike | number | string
     totalAmount: Decimal | DecimalJsLike | number | string
     paidAmount?: Decimal | DecimalJsLike | number | string
     pendingAmount: Decimal | DecimalJsLike | number | string
@@ -22745,6 +22901,9 @@ export namespace Prisma {
     projectNumber?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    subtotal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    taxRate?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    taxAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     totalAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     paidAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     pendingAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
@@ -22772,6 +22931,9 @@ export namespace Prisma {
     projectNumber?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    subtotal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    taxRate?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    taxAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     totalAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     paidAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     pendingAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
@@ -23185,6 +23347,9 @@ export namespace Prisma {
     projectNumber: string
     title: string
     description?: string | null
+    subtotal?: Decimal | DecimalJsLike | number | string
+    taxRate?: Decimal | DecimalJsLike | number | string
+    taxAmount?: Decimal | DecimalJsLike | number | string
     totalAmount: Decimal | DecimalJsLike | number | string
     paidAmount?: Decimal | DecimalJsLike | number | string
     pendingAmount: Decimal | DecimalJsLike | number | string
@@ -23306,6 +23471,9 @@ export namespace Prisma {
     projectNumber?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    subtotal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    taxRate?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    taxAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     totalAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     paidAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     pendingAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
@@ -23332,6 +23500,9 @@ export namespace Prisma {
     projectNumber?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    subtotal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    taxRate?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    taxAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     totalAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     paidAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     pendingAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
@@ -23356,6 +23527,9 @@ export namespace Prisma {
     projectNumber?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    subtotal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    taxRate?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    taxAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     totalAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     paidAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     pendingAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
@@ -23496,6 +23670,9 @@ export namespace Prisma {
     projectNumber: string
     title: string
     description?: string | null
+    subtotal?: Decimal | DecimalJsLike | number | string
+    taxRate?: Decimal | DecimalJsLike | number | string
+    taxAmount?: Decimal | DecimalJsLike | number | string
     totalAmount: Decimal | DecimalJsLike | number | string
     paidAmount?: Decimal | DecimalJsLike | number | string
     pendingAmount: Decimal | DecimalJsLike | number | string
@@ -23613,6 +23790,9 @@ export namespace Prisma {
     projectNumber?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    subtotal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    taxRate?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    taxAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     totalAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     paidAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     pendingAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
@@ -23639,6 +23819,9 @@ export namespace Prisma {
     projectNumber?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    subtotal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    taxRate?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    taxAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     totalAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     paidAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     pendingAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
@@ -23663,6 +23846,9 @@ export namespace Prisma {
     projectNumber?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    subtotal?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    taxRate?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    taxAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     totalAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     paidAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     pendingAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string

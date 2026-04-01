@@ -38,6 +38,17 @@ const acceptQuote = asyncHandler(async (req, res) => {
   sendSuccess(res, { data: result, message: 'Cotización aceptada y proyecto creado correctamente', statusCode: 201 });
 });
 
+const rejectQuote = asyncHandler(async (req, res) => {
+  const clientIp = req.ip || req.connection?.remoteAddress;
+  const result = await portalService.rejectQuote(
+    req.client.id,
+    parseInt(req.params.id, 10),
+    req.body,
+    clientIp,
+  );
+  sendSuccess(res, { data: result, message: 'Cotización rechazada correctamente' });
+});
+
 const getProjects = asyncHandler(async (req, res) => {
   const result = await portalService.getProjects(req.client.id, req.query);
   sendSuccess(res, { data: result, message: 'Proyectos obtenidos' });
@@ -65,6 +76,7 @@ module.exports = {
   getQuotes,
   getQuoteDetail,
   acceptQuote,
+  rejectQuote,
   getProjects,
   getProjectDetail,
   getDocuments,

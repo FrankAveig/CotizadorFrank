@@ -39,7 +39,7 @@ const findById = async (id) => {
     where: { id },
     include: {
       client: true,
-      quote: { select: { id: true, quoteNumber: true, title: true, currency: true } },
+      quote: { select: { id: true, quoteNumber: true, title: true, currency: true, taxRate: true } },
       acceptance: { select: { id: true, acceptanceType: true, acceptedTotalAmount: true, acceptedAt: true } },
       items: { orderBy: { id: 'asc' } },
       payments: {

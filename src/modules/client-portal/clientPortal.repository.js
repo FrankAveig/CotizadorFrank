@@ -202,6 +202,9 @@ const getProjects = async (clientId, { page = 1, limit = 20, status }) => {
         projectNumber: true,
         title: true,
         description: true,
+        subtotal: true,
+        taxRate: true,
+        taxAmount: true,
         totalAmount: true,
         paidAmount: true,
         pendingAmount: true,
@@ -226,7 +229,7 @@ const getProjectById = async (clientId, projectId) => {
   return prisma.project.findFirst({
     where: { id: projectId, clientId },
     include: {
-      quote: { select: { id: true, quoteNumber: true, title: true, currency: true } },
+      quote: { select: { id: true, quoteNumber: true, title: true, currency: true, taxRate: true } },
       acceptance: { select: { id: true, acceptanceType: true, acceptedTotalAmount: true, acceptedAt: true } },
       items: { orderBy: { id: 'asc' } },
       payments: {

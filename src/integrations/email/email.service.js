@@ -375,10 +375,122 @@ const sendClientAcceptanceNotification = async (client, quote, acceptanceType, a
   });
 };
 
+const escapeHtml = (str) => {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+};
+
+const sendClientQuoteRejectionNotification = async (client, quote, notes) => {
+  const adminEmail = env.adminNotificationEmail;
+  if (!adminEmail) {
+    console.log('[Email] ADMIN_NOTIFICATION_EMAIL no configurado — notificación de rechazo no enviada');
+    return { success: false, reason: 'no_admin_email' };
+  }
+
+  const currency = quote.currency || 'USD';
+  const notesBlock = notes
+    ? `
+        <div style="background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:16px;margin:20px 0;">
+          <h3 style="margin:0 0 8px;color:#991b1b;font-size:14px;">Motivo o comentario del cliente</h3>
+          <p style="margin:0;font-size:14px;color:#7f1d1d;white-space:pre-wrap;">${escapeHtml(notes)}</p>
+        </div>
+      `
+    : '';
+
+  const html = `
+    <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;color:#333;">
+      <div style="background:#b91c1c;padding:24px;text-align:center;">
+        <h1 style="color:#fff;margin:0;font-size:22px;">COTIZACIÓN RECHAZADA</h1>
+        <p style="color:rgba(255,255,255,0.9);margin:8px 0 0;font-size:14px;">El cliente rechazó la oferta completa desde el portal</p>
+      </div>
+      <div style="padding:24px;background:#fff;">
+        <div style="background:#f8fafc;border-radius:8px;padding:16px;margin:0 0 16px;">
+          <h3 style="margin:0 0 8px;">Cliente</h3>
+          <p style="margin:2px 0;"><strong>${escapeHtml(client.businessName)}</strong></p>
+          <p style="margin:2px 0;">${escapeHtml(client.contactName)} — ${escapeHtml(client.email)}</p>
+          <p style="margin:2px 0;">Tel: ${escapeHtml(client.phone || '')}</p>
+        </div>
+        <div style="background:#f8fafc;border-radius:8px;padding:16px;margin:0 0 16px;">
+          <h3 style="margin:0 0 8px;">Cotización</h3>
+          <p style="margin:2px 0;"><strong>${escapeHtml(quote.quoteNumber)}</strong> — ${escapeHtml(quote.title)}</p>
+          <p style="margin:2px 0;">Monto ofertado: <strong>${currency} ${parseFloat(quote.totalAmount).toFixed(2)}</strong></p>
+        </div>
+        ${notesBlock}
+        <p style="margin:16px 0 0;font-size:13px;color:#64748b;">No se creó proyecto. Todos los ítems quedaron marcados como rechazados.</p>
+      </div>
+      <div style="background:#f1f5f9;padding:16px;text-align:center;font-size:12px;color:#999;">
+        <p style="margin:0;">Notificación automática del sistema de cotizaciones.</p>
+      </div>
+    </div>
+  `;
+
+  return sendEmail({
+    to: adminEmail,
+    subject: `Cotización rechazada: ${quote.quoteNumber} — ${client.businessName}`,
+    html,
+  });
+};
+
+const sendAcceptanceEmailToClient = async (client, quote, acceptance, project, pdfBuffer = null) => {
+  const currency = quote.currency || 'USD';
+  const isPartial = acceptance.acceptanceType === 'partial';
+  const typeLabel = isPartial ? 'Aceptacion Parcial' : 'Aceptacion Total';
+  const projectLink = `${portalUrl}/projects/${project.id}`;
+
+  const attachments = pdfBuffer
+    ? [{ filename: `aceptacion-${quote.quoteNumber}.pdf`, content: pdfBuffer, contentType: 'application/pdf' }]
+    : [];
+
+  const headerBg = isPartial ? '#d97706' : '#059669';
+
+  const html = `
+    <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;color:#333;">
+      <div style="background:${headerBg};padding:24px;text-align:center;">
+        <h1 style="color:#fff;margin:0;font-size:22px;">Confirmacion de ${typeLabel}</h1>
+        <p style="color:rgba(255,255,255,0.9);margin:8px 0 0;font-size:14px;">Cotizacion ${escapeHtml(quote.quoteNumber)}</p>
+      </div>
+      <div style="padding:24px;background:#fff;">
+        <p>Estimado/a <strong>${escapeHtml(client.contactName)}</strong>,</p>
+        <p>Le confirmamos que su ${typeLabel.toLowerCase()} de la cotizacion <strong>${escapeHtml(quote.quoteNumber)} — ${escapeHtml(quote.title)}</strong> ha sido registrada exitosamente.</p>
+
+        <div style="background:#f8fafc;border-radius:8px;padding:16px;margin:16px 0;">
+          <p style="margin:2px 0;font-size:13px;color:#666;">Proyecto creado:</p>
+          <p style="margin:4px 0;font-size:18px;font-weight:bold;color:${headerBg};">${escapeHtml(project.projectNumber)}</p>
+          <p style="margin:4px 0;font-size:14px;"><strong>Monto del proyecto: ${currency} ${parseFloat(project.totalAmount).toFixed(2)}</strong></p>
+        </div>
+
+        <div style="text-align:center;margin:24px 0;">
+          <a href="${projectLink}" style="display:inline-block;background:${headerBg};color:#fff;padding:14px 32px;border-radius:8px;text-decoration:none;font-weight:bold;font-size:15px;">
+            Ver mi proyecto
+          </a>
+        </div>
+
+        <p style="color:#666;font-size:13px;">Adjuntamos el documento PDF de aceptacion para su respaldo. Puede acceder a su portal en cualquier momento para revisar el avance del proyecto.</p>
+      </div>
+      <div style="background:#f1f5f9;padding:16px;text-align:center;font-size:12px;color:#999;">
+        <p style="margin:0;">Este es un correo automatico. Si tiene preguntas, contacte a nuestro equipo.</p>
+      </div>
+    </div>
+  `;
+
+  return sendEmail({
+    to: client.email,
+    subject: `Confirmacion de ${typeLabel}: ${quote.quoteNumber} — Proyecto ${project.projectNumber}`,
+    html,
+    attachments,
+  });
+};
+
 module.exports = {
   sendEmail,
   sendQuoteEmail,
   sendQuoteStatusChangeEmail,
   sendPaymentReceivedEmail,
   sendClientAcceptanceNotification,
+  sendClientQuoteRejectionNotification,
+  sendAcceptanceEmailToClient,
 };
