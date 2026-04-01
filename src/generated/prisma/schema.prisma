@@ -1,0 +1,336 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Enums ───────────────────────────────────────────────
+
+enum UserRole {
+  admin
+  sales
+  finance
+}
+
+enum QuoteStatus {
+  draft
+  issued
+  sent
+  viewed
+  partially_accepted
+  fully_accepted
+  rejected
+  expired
+  canceled
+}
+
+enum QuoteItemStatus {
+  pending
+  accepted
+  rejected
+}
+
+enum AcceptanceType {
+  full
+  partial
+}
+
+enum ProjectStatus {
+  pending_start
+  in_progress
+  completed
+  canceled
+}
+
+enum ProjectItemStatus {
+  pending
+  in_progress
+  completed
+  canceled
+}
+
+enum PaymentMethod {
+  transfer
+  cash
+  card
+  paypal
+  bank_deposit
+  other
+}
+
+enum DocumentType {
+  quote_pdf
+  acceptance_pdf
+  payment_receipt
+  invoice_pdf
+  contract
+  other
+}
+
+enum EntityType {
+  quote
+  quote_item
+  project
+  project_item
+}
+
+// ─── Models ──────────────────────────────────────────────
+
+model User {
+  id           Int      @id @default(autoincrement())
+  name         String   @db.VarChar(150)
+  email        String   @unique @db.VarChar(255)
+  passwordHash String   @db.VarChar(255)
+  role         UserRole @default(admin)
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  quotesCreated      Quote[]
+  paymentsRegistered ProjectPayment[]
+  documentsUploaded  Document[]
+  statusChanges      StatusHistory[]
+
+  @@map("users")
+}
+
+model Client {
+  id           Int      @id @default(autoincrement())
+  businessName String   @db.VarChar(255)
+  contactName  String   @db.VarChar(255)
+  email        String   @unique @db.VarChar(255)
+  phone        String   @db.VarChar(50)
+  address      String?  @db.Text
+  taxId        String?  @db.VarChar(50)
+  passwordHash String?  @db.VarChar(255)
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  quotes      Quote[]
+  projects    Project[]
+  documents   Document[]
+  acceptances QuoteAcceptance[]
+
+  @@map("clients")
+}
+
+model Quote {
+  id              Int         @id @default(autoincrement())
+  clientId        Int
+  createdByUserId Int
+  quoteNumber     String      @unique @db.VarChar(50)
+  title           String      @db.VarChar(255)
+  description     String?     @db.Text
+  subtotal        Decimal     @default(0) @db.Decimal(14, 2)
+  discountAmount  Decimal     @default(0) @db.Decimal(14, 2)
+  taxRate         Decimal     @default(0) @db.Decimal(5, 2)
+  taxAmount       Decimal     @default(0) @db.Decimal(14, 2)
+  totalAmount     Decimal     @default(0) @db.Decimal(14, 2)
+  currency        String      @default("USD") @db.VarChar(10)
+  status          QuoteStatus @default(draft)
+  validUntil      DateTime?
+  issuedAt        DateTime?
+  sentAt          DateTime?
+  viewedAt        DateTime?
+  notes           String?     @db.Text
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  client      Client            @relation(fields: [clientId], references: [id])
+  createdBy   User              @relation(fields: [createdByUserId], references: [id])
+  items       QuoteItem[]
+  acceptances QuoteAcceptance[]
+  projects    Project[]
+  documents   Document[]
+
+  @@index([clientId])
+  @@index([createdByUserId])
+  @@index([status])
+  @@map("quotes")
+}
+
+model QuoteItem {
+  id          Int             @id @default(autoincrement())
+  quoteId     Int
+  itemOrder   Int
+  title       String          @db.VarChar(255)
+  description String?         @db.Text
+  quantity    Decimal         @db.Decimal(10, 2)
+  unitPrice   Decimal         @db.Decimal(14, 2)
+  subtotal    Decimal         @db.Decimal(14, 2)
+  status      QuoteItemStatus @default(pending)
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  quote           Quote                 @relation(fields: [quoteId], references: [id], onDelete: Cascade)
+  acceptanceItems QuoteAcceptanceItem[]
+
+  @@index([quoteId])
+  @@map("quote_items")
+}
+
+model QuoteAcceptance {
+  id                  Int            @id @default(autoincrement())
+  quoteId             Int
+  clientId            Int
+  acceptanceType      AcceptanceType
+  acceptedTotalAmount Decimal        @db.Decimal(14, 2)
+  acceptedAt          DateTime       @default(now())
+  clientIp            String?        @db.VarChar(50)
+  notes               String?        @db.Text
+  createdAt           DateTime       @default(now())
+  updatedAt           DateTime       @updatedAt
+
+  quote     Quote                 @relation(fields: [quoteId], references: [id])
+  client    Client                @relation(fields: [clientId], references: [id])
+  items     QuoteAcceptanceItem[]
+  project   Project?
+  documents Document[]
+
+  @@index([quoteId])
+  @@index([clientId])
+  @@map("quote_acceptances")
+}
+
+model QuoteAcceptanceItem {
+  id                Int      @id @default(autoincrement())
+  quoteAcceptanceId Int
+  quoteItemId       Int
+  acceptedPrice     Decimal  @db.Decimal(14, 2)
+  createdAt         DateTime @default(now())
+
+  acceptance QuoteAcceptance @relation(fields: [quoteAcceptanceId], references: [id], onDelete: Cascade)
+  quoteItem  QuoteItem       @relation(fields: [quoteItemId], references: [id])
+
+  @@index([quoteAcceptanceId])
+  @@index([quoteItemId])
+  @@map("quote_acceptance_items")
+}
+
+model Project {
+  id                Int           @id @default(autoincrement())
+  clientId          Int
+  quoteId           Int
+  quoteAcceptanceId Int           @unique
+  projectNumber     String        @unique @db.VarChar(50)
+  title             String        @db.VarChar(255)
+  description       String?       @db.Text
+  totalAmount       Decimal       @db.Decimal(14, 2)
+  paidAmount        Decimal       @default(0) @db.Decimal(14, 2)
+  pendingAmount     Decimal       @db.Decimal(14, 2)
+  paidPercentage    Decimal       @default(0) @db.Decimal(5, 2)
+  isFullyPaid       Boolean       @default(false)
+  status            ProjectStatus @default(pending_start)
+  startedAt         DateTime?
+  finishedAt        DateTime?
+  canceledAt        DateTime?
+  notes             String?       @db.Text
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+
+  client     Client           @relation(fields: [clientId], references: [id])
+  quote      Quote            @relation(fields: [quoteId], references: [id])
+  acceptance QuoteAcceptance  @relation(fields: [quoteAcceptanceId], references: [id])
+  items      ProjectItem[]
+  payments   ProjectPayment[]
+  documents  Document[]
+
+  @@index([clientId])
+  @@index([quoteId])
+  @@index([status])
+  @@map("projects")
+}
+
+model ProjectItem {
+  id          Int               @id @default(autoincrement())
+  projectId   Int
+  quoteItemId Int?
+  title       String            @db.VarChar(255)
+  description String?           @db.Text
+  quantity    Decimal           @db.Decimal(10, 2)
+  unitPrice   Decimal           @db.Decimal(14, 2)
+  subtotal    Decimal           @db.Decimal(14, 2)
+  status      ProjectItemStatus @default(pending)
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([projectId])
+  @@map("project_items")
+}
+
+model ProjectPayment {
+  id                   Int           @id @default(autoincrement())
+  projectId            Int
+  registeredByUserId   Int
+  paymentDate          DateTime
+  amount               Decimal       @db.Decimal(14, 2)
+  percentageEquivalent Decimal       @db.Decimal(5, 2)
+  paymentMethod        PaymentMethod
+  reference            String?       @db.VarChar(255)
+  notes                String?       @db.Text
+  receiptFilePath      String?       @db.VarChar(500)
+  createdAt            DateTime      @default(now())
+  updatedAt            DateTime      @updatedAt
+
+  project      Project @relation(fields: [projectId], references: [id])
+  registeredBy User    @relation(fields: [registeredByUserId], references: [id])
+
+  @@index([projectId])
+  @@index([registeredByUserId])
+  @@map("project_payments")
+}
+
+model Document {
+  id                Int          @id @default(autoincrement())
+  clientId          Int?
+  quoteId           Int?
+  quoteAcceptanceId Int?
+  projectId         Int?
+  documentType      DocumentType
+  fileName          String       @db.VarChar(255)
+  invoiceNumber     String?      @db.VarChar(100)
+  notes             String?      @db.Text
+  filePath          String?      @db.VarChar(500)
+  mimeType          String?      @db.VarChar(100)
+  sizeInBytes       Int?
+  bucket            String?      @db.VarChar(100)
+  objectKey         String?      @db.VarChar(500)
+  uploadedByUserId  Int?
+  createdAt         DateTime     @default(now())
+
+  client     Client?          @relation(fields: [clientId], references: [id])
+  quote      Quote?           @relation(fields: [quoteId], references: [id])
+  acceptance QuoteAcceptance? @relation(fields: [quoteAcceptanceId], references: [id])
+  project    Project?         @relation(fields: [projectId], references: [id])
+  uploadedBy User?            @relation(fields: [uploadedByUserId], references: [id])
+
+  @@index([clientId])
+  @@index([quoteId])
+  @@index([projectId])
+  @@index([quoteAcceptanceId])
+  @@map("documents")
+}
+
+model StatusHistory {
+  id              Int        @id @default(autoincrement())
+  entityType      EntityType
+  entityId        Int
+  oldStatus       String     @db.VarChar(50)
+  newStatus       String     @db.VarChar(50)
+  changedByUserId Int?
+  changedAt       DateTime   @default(now())
+  notes           String?    @db.Text
+
+  changedBy User? @relation(fields: [changedByUserId], references: [id])
+
+  @@index([entityType, entityId])
+  @@index([changedByUserId])
+  @@map("status_history")
+}
