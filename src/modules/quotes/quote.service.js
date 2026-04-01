@@ -6,7 +6,7 @@ const { generateQuoteNumber, generateProjectNumber } = require('../../utils/numb
 const { QUOTE_STATUSES, QUOTE_ITEM_STATUSES, ACCEPTABLE_QUOTE_STATUSES, ENTITY_TYPES, PROJECT_STATUSES } = require('../../utils/enums');
 const { generateQuotePdf, generateAcceptancePdf } = require('../../integrations/pdf/pdf.service');
 const s3Service = require('../../storage/s3.service');
-const { sendQuoteEmail, sendQuoteStatusChangeEmail, sendClientAcceptanceNotification } = require('../../integrations/email/email.service');
+const { sendQuoteEmail, sendClientAcceptanceNotification } = require('../../integrations/email/email.service');
 
 const createQuote = async (data, userId) => {
   const quoteNumber = await generateQuoteNumber();
@@ -149,12 +149,6 @@ const issueQuote = async (id, userId) => {
 
     return result;
   });
-
-  try {
-    await sendQuoteStatusChangeEmail(updated.client, updated, QUOTE_STATUSES.DRAFT, QUOTE_STATUSES.ISSUED);
-  } catch (err) {
-    console.error('[Quote Issue] Error enviando email:', err.message);
-  }
 
   return updated;
 };
