@@ -6,14 +6,14 @@ const prisma = new PrismaClient();
 async function main() {
   console.log('Iniciando seed...');
 
-  const passwordHash = await bcrypt.hash('Admin123456*', 12);
+  const passwordHash = await bcrypt.hash('Rainbownishafp123@', 12);
 
   const admin = await prisma.user.upsert({
-    where: { email: 'admin@example.com' },
+    where: { email: 'xfpad93@gmail.com' },
     update: {},
     create: {
-      name: 'Administrator',
-      email: 'admin@example.com',
+      name: 'Frank Aveiga',
+      email: 'xfpad93@gmail.com',
       passwordHash,
       role: 'admin',
       isActive: true,
@@ -28,8 +28,8 @@ async function main() {
   });
 
   console.log('\n--- Credenciales del administrador ---');
-  console.log('Email: admin@example.com');
-  console.log('Password: Admin123456*');
+  console.log('Email: xfpad93@gmail.com');
+  console.log('(La contraseña es la definida en prisma/seed.js)');
   console.log('--------------------------------------\n');
 
   console.log('Seed completado exitosamente');
